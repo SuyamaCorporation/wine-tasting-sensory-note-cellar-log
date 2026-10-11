@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wine Cellar Log</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-stone-950 text-stone-100 min-h-screen p-4">
+<div class="max-w-3xl mx-auto">
+  <h1 class="text-2xl font-bold text-center text-red-400 mb-1">Wine Cellar Log</h1>
+  <p class="text-center text-stone-400 text-sm mb-4">Tasting notes & cellar management</p>
+
+  <!-- Tabs -->
+  <div class="flex gap-1 mb-4 bg-stone-800 rounded-lg p-1">
+    <button class="tab-btn flex-1 py-2 rounded text-sm" data-tab="add">Add Wine</button>
+    <button class="tab-btn flex-1 py-2 rounded text-sm" data-tab="list">Cellar List</button>
+    <button class="tab-btn flex-1 py-2 rounded text-sm" data-tab="stats">Stats</button>
+  </div>
+
+  <!-- Add Wine -->
+  <div id="tab-add" class="tab-panel">
+    <form id="wine-form" class="space-y-4">
+      <div class="bg-stone-800 rounded-xl p-4">
+        <h2 class="text-sm font-bold text-red-400 mb-3">Wine Details</h2>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="col-span-2">
+            <label class="text-xs text-stone-400 block mb-1" for="w-name">Wine Name *</label>
+            <input id="w-name" required type="text" class="w-full bg-stone-700 text-white rounded px-2 py-1 text-sm" placeholder="e.g. Château Margaux">
+          </div>
+          <div>
+            <label class="text-xs text-stone-400 block mb-1" for="w-producer">Producer</label>
+            <input id="w-producer" type="text" class="w-full bg-stone-700 text-white rounded px-2 py-1 text-sm" placeholder="Producer">
+          </div>
+          <div>
+            <label class="text-xs text-stone-400 block mb-1" for="w-grape">Grape Variety</label>
+            <input id="w-grape" type="text" class="w-full bg-stone-700 text-white rounded px-2 py-1 text-sm" placeholder="e.g. Cabernet Sauvignon">
+          </div>
+          <div>
+            <label class="text-xs text-stone-400 block mb-1" for="w-region">Region</label>
+            <input id="w-region" type="text" class="w-full bg-stone-700 text-white rounded px-2 py-1 text-sm" placeholder="e.g. Bordeaux">
+          </div>
+          <div>
+            <label class="text-xs text-stone-400 block mb-1" for="w-vintage">Vintage</label>
+            <input id="w-vintage" type="number" min="1900" max="2030" class="w-full bg-stone-700 text-white rounded px-2 py-1 text-sm" placeholder="2019">
+          </div>
+          <div>
+            <label class="text-xs text-stone-400 block mb-1" for="w-price">Purchase Price ($)</label>
+            <input id="w-price" type="number" min="0" step="0.01" class="w-full bg-stone-700 text-white rounded px-2 py-1 text-sm" placeholder="45.00">
+          </div>
+          <div>
+            <label class="text-xs text-stone-400 block mb-1" for="w-qty">Quantity (bottles)</label>
+            <input id="w-qty" type="number" min="1" value="1" class="w-full bg-stone-700 text-white rounded px-2 py-1 text-sm">
+          </div>
+          <div>
+            <label class="text-xs text-stone-400 block mb-1" for="w-purchase-date">Purchase Date</label>
+            <input id="w-purchase-date" type="date" class="w-full bg-stone-700 text-white rounded px-2 py-1 text-sm">
+          </div>
+        </div>
+      </div>
+
+      <!-- Tasting Notes -->
+      <div class="bg-stone-800 rounded-xl p-4">
+        <h2 class="text-sm font-bold text-red-400 mb-3">Tasting Notes</h2>
+        <div class="grid grid-cols-2 gap-3 mb-3">
+          <div>
+            <label class="text-xs text-stone-400 block mb-1" for="t-color">Appearance (Color)</label>
+            <select id="t-color" class="w-full bg-stone-700 text-white rounded px-2 py-1 text-sm">
+              <option value="">--</option>
+              <option>Ruby</option><option>Garnet</option><option>Purple</option>
+              <option>Pale Straw</option><option>Gold</option><option>Amber</option>
+              <option>Rose</option><option>Salmon</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-xs text-stone-400 block mb-1" for="t-clarity">Clarity</label>
+            <select id="t-clarity" class="w-full bg-stone-700 text-white rounded px-2 py-1 text-sm">
+              <option value="">--</option>
+              <option>Brilliant</option><option>Clear</option><option>Hazy</option><option>Cloudy</option>
+            </select>
+          </div>
+        </div>
+        <!-- Nose -->
+        <div class="mb-3">
+          <label class="text-xs text-stone-400 block mb-1">Nose Aromas (select multiple)</label>
+          <div id="aroma-checkboxes" class="grid grid-cols-3 gap-1 text-xs"></div>
+        </div>
+        <!-- Palate sliders -->
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="text-xs text-stone-400">Acidity <span id="acidity-val" class="text-red-300">3</span>/5</label>
+            <input type="range" id="t-acidity" min="1" max="5" value="3" class="w-full"></div>
+          <div><label class="text-xs text-stone-400">Tannin <span id="tannin-val" class="text-red-300">3</span>/5</label>
+            <input type="range" id="t-tannin" min="1" max="5" value="3" class="w-full"></div>
+          <div><label class="text-xs text-stone-400">Body <span id="body-val" class="text-red-300">3</span>/5</label>
+            <input type="range" id="t-body" min="1" max="5" value="3" class="w-full"></div>
+          <div><label class="text-xs text-stone-400">Finish <span id="finish-val" class="text-red-300">3</span>/5</label>
+            <input type="range" id="t-finish" min="1" max="5" value="3" class="w-full"></div>
+        </div>
+        <div class="mt-3">
+          <label class="text-xs text-stone-400 block mb-1" for="t-score">Parker Score (50-100): <span id="score-val" class="text-red-300 font-bold">88</span></label>
+          <input type="range" id="t-score" min="50" max="100" value="88" class="w-full">
+        </div>
+        <div class="mt-3">
+          <label class="text-xs text-stone-400 block mb-1" for="t-notes">Additional Notes</label>
+          <textarea id="t-notes" rows="2" class="w-full bg-stone-700 text-white rounded px-2 py-1 text-sm resize-none" placeholder="Free-form tasting notes..."></textarea>
+        </div>
+      </div>
+      <button type="submit" class="w-full bg-red-800 hover:bg-red-700 text-white py-2 rounded font-semibold">Add to Cellar</button>
+    </form>
+  </div>
+
+  <!-- List -->
+  <div id="tab-list" class="tab-panel hidden">
+    <div class="flex flex-wrap gap-2 mb-3">
+      <input id="search-text" type="text" placeholder="Search name/producer..." class="bg-stone-700 text-white rounded px-2 py-1 text-sm flex-1 min-w-32">
+      <input id="filter-grape" type="text" placeholder="Grape..." class="bg-stone-700 text-white rounded px-2 py-1 text-sm w-28">
+      <input id="filter-region" type="text" placeholder="Region..." class="bg-stone-700 text-white rounded px-2 py-1 text-sm w-28">
+      <input id="filter-vintage" type="number" placeholder="Year..." class="bg-stone-700 text-white rounded px-2 py-1 text-sm w-20">
+    </div>
+    <div id="wine-list" class="space-y-2"></div>
+  </div>
+
+  <!-- Stats -->
+  <div id="tab-stats" class="tab-panel hidden">
+    <div class="grid grid-cols-3 gap-3 mb-4">
+      <div class="bg-stone-800 rounded-xl p-3 text-center">
+        <div class="text-xs text-stone-400">Total Bottles</div>
+        <div id="stat-bottles" class="text-2xl font-bold text-red-400">0</div>
+      </div>
+      <div class="bg-stone-800 rounded-xl p-3 text-center">
+        <div class="text-xs text-stone-400">Total Value</div>
+        <div id="stat-value" class="text-2xl font-bold text-yellow-400">$0</div>
+      </div>
+      <div class="bg-stone-800 rounded-xl p-3 text-center">
+        <div class="text-xs text-stone-400">Avg Score</div>
+        <div id="stat-score" class="text-2xl font-bold text-green-400">–</div>
+      </div>
+    </div>
+    <div class="bg-stone-800 rounded-xl p-4">
+      <h2 class="text-sm font-bold text-red-400 mb-3">Bottles by Grape Variety</h2>
+      <svg id="donut-chart" width="200" height="200" viewBox="0 0 200 200" class="mx-auto block"></svg>
+      <div id="donut-legend" class="mt-3 flex flex-wrap gap-2 justify-center text-xs"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function escapeHtml(s) { const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+const AROMAS = ['Blackcurrant','Blackberry','Cherry','Raspberry','Plum','Fig','Peach','Apricot','Lemon','Grapefruit','Floral','Violet','Rose','Vanilla','Oak','Cedar','Tobacco','Leather','Earth','Mushroom','Pepper','Spice','Chocolate','Coffee','Caramel','Honey','Butter','Mineral','Toast','Truffle'];
+const PALETTE_COLORS = ['#e74c3c','#3498db','#2ecc71','#f39c12','#9b59b6','#1abc9c','#e67e22','#34495e'];
+
+// Build aroma checkboxes
+const aromaBox = document.getElementById('aroma-checkboxes');
+AROMAS.forEach(a => {
+  const label = document.createElement('label');
+  label.className = 'flex items-center gap-1 cursor-pointer text-stone-300 hover:text-white';
+  const cb = document.createElement('input');
+  cb.type = 'checkbox';
+  cb.value = a;
+  cb.className = 'aroma-cb accent-red-600';
+  label.appendChild(cb);
+  const span = document.createElement('span');
+  span.textContent = a;
+  label.appendChild(span);
+  aromaBox.appendChild(label);
+});
+
+// Slider live values
+['acidity','tannin','body','finish'].forEach(id => {
+  document.getElementById(`t-${id}`).addEventListener('input', e => {
+    document.getElementById(`${id}-val`).textContent = e.target.value;
+  });
+});
+document.getElementById('t-score').addEventListener('input', e => {
+  document.getElementById('score-val').textContent = e.target.value;
+});
+
+function getCellar() { return JSON.parse(localStorage.getItem('wine-cellar') || '[]'); }
+function saveCellar(c) { localStorage.setItem('wine-cellar', JSON.stringify(c)); }
+
+document.getElementById('wine-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const aromas = Array.from(document.querySelectorAll('.aroma-cb:checked')).map(cb => cb.value);
+  const wine = {
+    id: Date.now(),
+    name: document.getElementById('w-name').value,
+    producer: document.getElementById('w-producer').value,
+    grape: document.getElementById('w-grape').value,
+    region: document.getElementById('w-region').value,
+    vintage: document.getElementById('w-vintage').value,
+    price: parseFloat(document.getElementById('w-price').value) || 0,
+    qty: parseInt(document.getElementById('w-qty').value) || 1,
+    purchaseDate: document.getElementById('w-purchase-date').value,
+    tasting: {
+      color: document.getElementById('t-color').value,
+      clarity: document.getElementById('t-clarity').value,
+      aromas,
+      acidity: document.getElementById('t-acidity').value,
+      tannin: document.getElementById('t-tannin').value,
+      body: document.getElementById('t-body').value,
+      finish: document.getElementById('t-finish').value,
+      score: parseInt(document.getElementById('t-score').value),
+      notes: document.getElementById('t-notes').value
+    }
+  };
+  const cellar = getCellar();
+  cellar.push(wine);
+  saveCellar(cellar);
+  e.target.reset();
+  document.querySelectorAll('.aroma-cb').forEach(cb => cb.checked = false);
+  ['acidity','tannin','body','finish'].forEach(id => {
+    document.getElementById(`t-${id}`).value=3;
+    document.getElementById(`${id}-val`).textContent='3';
+  });
+  document.getElementById('t-score').value=88;
+  document.getElementById('score-val').textContent='88';
+  showTab('list');
+  renderList();
+});
+
+function renderList() {
+  const cellar = getCellar();
+  const search = document.getElementById('search-text').value.toLowerCase();
+  const grape = document.getElementById('filter-grape').value.toLowerCase();
+  const region = document.getElementById('filter-region').value.toLowerCase();
+  const vintage = document.getElementById('filter-vintage').value;
+
+  const filtered = cellar.filter(w =>
+    (!search || w.name.toLowerCase().includes(search) || (w.producer||'').toLowerCase().includes(search)) &&
+    (!grape || (w.grape||'').toLowerCase().includes(grape)) &&
+    (!region || (w.region||'').toLowerCase().includes(region)) &&
+    (!vintage || String(w.vintage) === vintage)
+  );
+
+  const list = document.getElementById('wine-list');
+  list.innerHTML = '';
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="text-stone-500 text-sm text-center py-4">No wines found.</div>';
+    return;
+  }
+  filtered.forEach(w => {
+    const div = document.createElement('div');
+    div.className = 'bg-stone-800 rounded-xl p-3 flex justify-between items-start gap-2';
+    const left = document.createElement('div');
+    left.innerHTML = `
+      <div class="font-semibold text-sm">${escapeHtml(w.name)} <span class="text-stone-400 text-xs">${escapeHtml(w.vintage||'')}</span></div>
+      <div class="text-xs text-stone-400">${escapeHtml(w.producer||'')} · ${escapeHtml(w.grape||'')} · ${escapeHtml(w.region||'')}</div>
+      ${w.tasting.score ? `<div class="text-xs text-yellow-400 mt-1">Score: ${escapeHtml(String(w.tasting.score))} pts</div>` : ''}
+      ${w.tasting.aromas.length ? `<div class="text-xs text-stone-400">Nose: ${w.tasting.aromas.slice(0,5).map(escapeHtml).join(', ')}</div>` : ''}
+    `;
+    const right = document.createElement('div');
+    right.className = 'text-right flex-shrink-0';
+    right.innerHTML = `<div class="text-xs text-stone-400">${escapeHtml(String(w.qty))} btl</div><div class="text-xs text-green-400">$${(w.price*w.qty).toFixed(0)}</div>`;
+    const delBtn = document.createElement('button');
+    delBtn.className = 'text-xs text-red-500 hover:text-red-300 mt-1 block';
+    delBtn.textContent = 'Remove';
+    delBtn.addEventListener('click', () => {
+      const c2 = getCellar().filter(x => x.id !== w.id);
+      saveCellar(c2);
+      renderList();
+    });
+    right.appendChild(delBtn);
+    div.appendChild(left);
+    div.appendChild(right);
+    list.appendChild(div);
+  });
+}
+
+function renderStats() {
+  const cellar = getCellar();
+  const totalBottles = cellar.reduce((a,w)=>a+w.qty,0);
+  const totalValue = cellar.reduce((a,w)=>a+w.price*w.qty,0);
+  const scores = cellar.filter(w=>w.tasting.score).map(w=>w.tasting.score);
+  const avgScore = scores.length ? (scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(1) : '–';
+  document.getElementById('stat-bottles').textContent = totalBottles;
+  document.getElementById('stat-value').textContent = '$'+totalValue.toFixed(0);
+  document.getElementById('stat-score').textContent = avgScore;
+
+  // Donut chart
+  const grapeCount = {};
+  cellar.forEach(w => {
+    const g = w.grape || 'Unknown';
+    grapeCount[g] = (grapeCount[g]||0) + w.qty;
+  });
+  const entries = Object.entries(grapeCount).sort((a,b)=>b[1]-a[1]);
+  const total = entries.reduce((a,[,v])=>a+v,0);
+  const svg = document.getElementById('donut-chart');
+  svg.innerHTML = '';
+  if (total === 0) { svg.innerHTML = '<text x="100" y="105" text-anchor="middle" fill="#666" font-size="14">No data</text>'; return; }
+
+  let startAngle = -Math.PI/2;
+  const cx=100, cy=100, r=80, inner=50;
+  entries.forEach(([g,c],i) => {
+    const frac = c/total;
+    const angle = frac * Math.PI*2;
+    const endAngle = startAngle + angle;
+    const x1=cx+r*Math.cos(startAngle), y1=cy+r*Math.sin(startAngle);
+    const x2=cx+r*Math.cos(endAngle), y2=cy+r*Math.sin(endAngle);
+    const ix1=cx+inner*Math.cos(startAngle), iy1=cy+inner*Math.sin(startAngle);
+    const ix2=cx+inner*Math.cos(endAngle), iy2=cy+inner*Math.sin(endAngle);
+    const large = angle > Math.PI ? 1 : 0;
+    const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d', `M${ix1},${iy1} L${x1},${y1} A${r},${r} 0 ${large},1 ${x2},${y2} L${ix2},${iy2} A${inner},${inner} 0 ${large},0 ${ix1},${iy1} Z`);
+    path.setAttribute('fill', PALETTE_COLORS[i%PALETTE_COLORS.length]);
+    svg.appendChild(path);
+    startAngle = endAngle;
+  });
+
+  const legend = document.getElementById('donut-legend');
+  legend.innerHTML = '';
+  entries.forEach(([g,c],i) => {
+    const s = document.createElement('span');
+    s.className = 'flex items-center gap-1';
+    s.innerHTML = `<span style="background:${PALETTE_COLORS[i%PALETTE_COLORS.length]}" class="inline-block w-3 h-3 rounded-sm"></span><span class="text-stone-300">${escapeHtml(g)} (${c})</span>`;
+    legend.appendChild(s);
+  });
+}
+
+// Tabs
+function showTab(name) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+  document.getElementById('tab-'+name).classList.remove('hidden');
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.className = `tab-btn flex-1 py-2 rounded text-sm ${b.dataset.tab===name ? 'bg-red-800 text-white font-medium' : 'text-stone-400 hover:text-stone-200'}`;
+  });
+  if (name==='list') renderList();
+  if (name==='stats') renderStats();
+}
+document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
+['search-text','filter-grape','filter-region','filter-vintage'].forEach(id => {
+  document.getElementById(id).addEventListener('input', renderList);
+});
+showTab('add');
+</script>
+</body>
+</html>
